@@ -3,43 +3,38 @@ package com.conversordemonedas;
 import javax.swing.*;
 
 public class ConversorDeMonedas {
+
     public static void main(String[] args) {
         boolean continueProgram = true;
 
         while (continueProgram) {
-            String[] options = {"Convertir de Pesos Chilenos a Dólar",
+            String[] options = {
+                    "Convertir de Pesos Chilenos a Dólar",
                     "Convertir de Pesos Chilenos a Euros",
                     "Convertir de Pesos Chilenos a Libras Esterlinas",
                     "Convertir de Pesos Chilenos a Yen Japonés",
-                    "Convertir de Pesos Chilenos a Won sur-coreano",
-                    "Convertir de Dólar a Pesos Chilenos",
-                    "Convertir de Euros a Pesos Chilenos",
-                    "Convertir de Libras Esterlinas a Pesos Chilenos",
-                    "Convertir de Yen Japonés a Pesos Chilenos",
-                    "Convertir de Won sur-coreano a Pesos Chilenos"};
+                    "Convertir de Pesos Chilenos a Won sur-coreano"
+            };
 
-            String input = (String) JOptionPane.showInputDialog(null,
-                    "Seleccione una opción de conversión:",
+            String input = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Seleccione una opción:",
                     "Menú Principal",
                     JOptionPane.PLAIN_MESSAGE,
                     null,
                     options,
-                    options[0]);
+                    options[0]
+            );
 
             if (input != null && input.length() > 0) {
                 double amount = getAmountFromUser();
                 if (amount != -1) {
-                    double result = performConversion(input, amount);
-                    JOptionPane.showMessageDialog(null,
-                            "El resultado de la conversión es: " + result);
-                    int response = JOptionPane.showConfirmDialog(null,
-                            "¿Desea realizar otra conversión?",
-                            "Continuar",
-                            JOptionPane.YES_NO_CANCEL_OPTION);
-
-                    if (response == JOptionPane.NO_OPTION || response == JOptionPane.CANCEL_OPTION) {
-                        JOptionPane.showMessageDialog(null, "Programa Terminado");
-                        continueProgram = false;
+                    double rate = getExchangeRate(input);
+                    double result = amount * rate;
+                    JOptionPane.showMessageDialog(null, "El resultado de la conversión es: " + result);
+                    continueProgram = deseaContinuar();
+                    if (continueProgram) {
+                        calcularCostoAlojamiento();
                     }
                 }
             } else {
@@ -51,8 +46,10 @@ public class ConversorDeMonedas {
 
     private static double getAmountFromUser() {
         while (true) {
-            String amountStr = JOptionPane.showInputDialog(null,
-                    "Ingrese la cantidad de dinero que desea convertir:");
+            String amountStr = JOptionPane.showInputDialog(
+                    null,
+                    "Ingrese la cantidad de dinero que desea convertir:"
+            );
 
             if (amountStr == null) {
                 return -1;
@@ -66,37 +63,116 @@ public class ConversorDeMonedas {
         }
     }
 
-    private static double performConversion(String option, double amount) {
-        final double USD_TO_CLP = 0.0013; // Tasa de cambio USD.
-        final double EUR_TO_CLP = 0.0011; // Tasa de cambio EUR.
-        final double GBP_TO_CLP = 0.0009; // Tasa de cambio GBP.
-        final double JPY_TO_CLP = 0.18; // Tasa de cambio JPY.
-        final double KRW_TO_CLP = 1.45; // Tasa de cambio KRW.
-
+    private static double getExchangeRate(String option) {
         switch (option) {
             case "Convertir de Pesos Chilenos a Dólar":
-                return amount * USD_TO_CLP;
+                return 0.0012;
             case "Convertir de Pesos Chilenos a Euros":
-                return amount * EUR_TO_CLP;
+                return 0.0010;
             case "Convertir de Pesos Chilenos a Libras Esterlinas":
-                return amount * GBP_TO_CLP;
+                return 0.00085;
             case "Convertir de Pesos Chilenos a Yen Japonés":
-                return amount * JPY_TO_CLP;
+                return 0.16;
             case "Convertir de Pesos Chilenos a Won sur-coreano":
-                return amount * KRW_TO_CLP;
-            case "Convertir de Dólar a Pesos Chilenos":
-                return amount / USD_TO_CLP;
-            case "Convertir de Euros a Pesos Chilenos":
-                return amount / EUR_TO_CLP;
-            case "Convertir de Libras Esterlinas a Pesos Chilenos":
-                return amount / GBP_TO_CLP;
-            case "Convertir de Yen Japonés a Pesos Chilenos":
-                return amount / JPY_TO_CLP;
-            case "Convertir de Won sur-coreano a Pesos Chilenos":
-                return amount / KRW_TO_CLP;
+                return 1.42;
             default:
                 throw new IllegalArgumentException("Opción de conversión no válida");
         }
     }
-}
 
+    private static void calcularCostoAlojamiento() {
+        String[] hotelOptions = {
+                "Hotel 3 Estrellas (USD 80 por noche)",
+                "Hotel 4 Estrellas (USD 120 por noche)",
+                "Hotel 5 Estrellas (USD 200 por noche)"
+        };
+
+        String hotelSelection = (String) JOptionPane.showInputDialog(
+                null,
+                "Seleccione el tipo de hotel:",
+                "Selección de Hotel",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                hotelOptions,
+                hotelOptions[0]
+        );
+
+        if (hotelSelection != null && hotelSelection.length() > 0) {
+            double costoPorNoche = obtenerTarifaHotel(hotelSelection);
+            if (costoPorNoche != -1) {
+                int numeroNoches = getNumeroNoches();
+                if (numeroNoches != -1) {
+                    double costoTotal = costoPorNoche * numeroNoches;
+                    JOptionPane.showMessageDialog(null, "El costo total por " + numeroNoches + " noches es: USD " + costoTotal);
+                    boolean continueHotelCalculation = deseaContinuar();
+                    if (continueHotelCalculation) {
+                        calcularCostoAlojamiento();
+                    }
+                }
+            }
+        }
+    }
+
+    private static double obtenerTarifaHotel(String hotelSelection) {
+        switch (hotelSelection) {
+            case "Hotel 3 Estrellas (USD 80 por noche)":
+                return 80.0;
+            case "Hotel 4 Estrellas (USD 120 por noche)":
+                return 120.0;
+            case "Hotel 5 Estrellas (USD 200 por noche)":
+                return 200.0;
+            default:
+                return -1;
+        }
+    }
+
+    private static int getNumeroNoches() {
+        while (true) {
+            String nochesStr = JOptionPane.showInputDialog(
+                    null,
+                    "Ingrese el número de noches:",
+                    "Número de Noches",
+                    JOptionPane.PLAIN_MESSAGE
+            );
+
+            if (nochesStr == null) {
+                return -1;
+            }
+
+            try {
+                return Integer.parseInt(nochesStr);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Valor no válido. Por favor ingrese un número.");
+            }
+        }
+    }
+
+    private static boolean deseaContinuar() {
+        String[] options = {"Sí", "No", "Cancelar"};
+
+        int option = JOptionPane.showOptionDialog(
+                null,
+                "¿Desea continuar usando el programa?",
+                "Continuar",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        switch (option) {
+            case JOptionPane.YES_OPTION:
+                return true;
+            case JOptionPane.NO_OPTION:
+                return false;
+            case JOptionPane.CANCEL_OPTION:
+            case JOptionPane.CLOSED_OPTION:
+                JOptionPane.showMessageDialog(null, "Programa Terminado");
+                System.exit(0);
+                return false;
+            default:
+                return false;
+        }
+    }
+}
