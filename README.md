@@ -38,9 +38,9 @@ Terminado.
 
 # Acceso al Proyecto:
 
-1. El Proyecto se encuentra en GitHub en el enlace web: https://github.com/xoshdev/Conversor-de-Monedas-Java
+1. El Proyecto se encuentra en GitHub en el enlace web: [https://github.com/xoshdev/Conversor-de-Monedas-Java](https://github.com/xoshdev/Conversor-JAVA-de-Monedas-CLP)
 
-2. Para clonar el repositorio, usa el siguiente comando en tu terminal: git clone https://github.com/xoshdev/Conversor-de-Monedas-Java.git
+2. Para clonar el repositorio, usa el siguiente comando en tu terminal: git clone [https://github.com/xoshdev/Conversor-de-Monedas-Java.git](https://github.com/xoshdev/Conversor-JAVA-de-Monedas-CLP.git)
 
 # Tecnologías utilizadas:
 
